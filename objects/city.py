@@ -1,10 +1,9 @@
 import pygame
 from pygame.locals import *
-import sys
 
 class City(pygame.sprite.Sprite):
 
-	def __init__(self, x, y, h, w, da, gs=None):
+	def __init__(self, x, y, h, w, gs=None):
 
 		pygame.sprite.Sprite.__init__(self)
 
@@ -13,7 +12,7 @@ class City(pygame.sprite.Sprite):
 		self.y = y
 		self.h = h
 		self.w = w
-		self.da = da
+		self.da = 1
 
 		self.rect = Rect(self.x, self.y, self.h, self.w)
 
@@ -22,7 +21,7 @@ class City(pygame.sprite.Sprite):
 
 class Base(City):
 
-	def __init__(self, x, y, h, w, da, count, gs=None):
+	def __init__(self, x, y, h, w, count, gs=None):
 
-		City.__init__(self, x, y, h, w, da, gs)
+		City.__init__(self, x, y, h, w, gs)
 		self.count = count

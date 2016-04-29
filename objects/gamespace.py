@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
 import sys
-from math import atan2, pi, degrees, sin, cos, sqrt
 from city import City, Base
+from missile import Missile
 
 class Gamespace(object):
 	def main(self):
@@ -14,6 +14,10 @@ class Gamespace(object):
 		self.clock = pygame.time.Clock()
 
 		self.initialize_cities_bases()
+
+		#active bombs and active missiles (empty at first)
+		self.missiles = []
+		self.bombs = []
 
 		while 1:
 			#click tick
@@ -49,14 +53,24 @@ class Gamespace(object):
 			text_pos.centery = base.rect.centery
 			self.screen.blit(text, text_pos)
 
+		for missile in self.missiles:
+			pygame.draw.line(self.screen, (0, 255, 0), missile.start, missile.pos)
+
 		pygame.display.flip()
 
 	def ticks(self):
 
 		# call ticks for each object
 
-		pass
+		i = 0
+		while (i < len(self.missiles)):
+			self.missiles[i].tick()
 
+			#check if missile is dead; if so, pop off of list
+			if (self.missiles[i].da == 0):
+				del self.missiles[i]
+			else:
+				i = i+1
 
 	def handle_events(self):
 
@@ -80,9 +94,9 @@ class Gamespace(object):
 
 			# if i is 0, 4, or 8, then create a base instead of a city
 			if (i % 4 == 0):
-				base = Base(20*(i+1) + i*width, self.size[1] - width,  width, width, 1, 9, self)
+				base = Base(20*(i+1) + i*width, self.size[1] - width,  width, width, 9, self)
 				self.bases.append(base)
 			else:
-				city = City(20*(i+1) + i*width, self.size[1] - width,  width, width, 1, self)
+				city = City(20*(i+1) + i*width, self.size[1] - width,  width, width, self)
 				self.cities.append(city)
 
