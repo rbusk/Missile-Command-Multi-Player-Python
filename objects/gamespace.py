@@ -38,9 +38,16 @@ class Gamespace(object):
 		for city in self.cities:
 			pygame.draw.rect(self.screen, (255, 0 , 0), city.rect)
 
+		font = pygame.font.Font(None, 30)
+
 		#draw bases
 		for base in self.bases:
 			pygame.draw.rect(self.screen, (0, 255, 0), base.rect)
+			text = font.render(str(base.count), True, (0, 0, 255))
+			text_pos = text.get_rect()
+			text_pos.centerx = base.rect.centerx
+			text_pos.centery = base.rect.centery
+			self.screen.blit(text, text_pos)
 
 		pygame.display.flip()
 
