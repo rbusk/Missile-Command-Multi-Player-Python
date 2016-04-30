@@ -21,8 +21,6 @@ class Gamespace(object):
 		self.bombs = []
 		self.explosions = []
 
-		#e = Explosion(300, 200, 1, 50, self)
-
 		while 1:
 			#click tick
 			self.clock.tick(60)
@@ -68,8 +66,10 @@ class Gamespace(object):
 		while (i < len(self.missiles)):
 			self.missiles[i].tick()
 
-			#check if missile is dead; if so, pop off of list
+			#check if missile is dead; if so, create explosion and pop off of list
 			if (self.missiles[i].da == 0):
+				explosion = Explosion(self.missiles[i].fx, self.missiles[i].fy, 2, 50, self)
+				self.explosions.append(explosion)
 				del self.missiles[i]
 			else:
 				i = i+1
@@ -78,7 +78,7 @@ class Gamespace(object):
 		while (i < len(self.explosions)):
 			self.explosions[i].tick()
 
-			#check if missile is dead; if so, pop off of list
+			#check if explosion is dead; if so, pop off of list
 			if (self.explosions[i].da == 0):
 				del self.explosions[i]
 			else:
@@ -88,7 +88,7 @@ class Gamespace(object):
 		while (i < len(self.bombs)):
 			self.bombs[i].tick()
 
-			#check if missile is dead; if so, pop off of list
+			#check if bomb is dead; if so, pop off of list
 			if (self.bombs[i].da == 0):
 				del self.bombs[i]
 			else:

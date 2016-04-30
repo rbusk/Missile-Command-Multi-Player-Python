@@ -11,6 +11,7 @@ class Missile(pygame.sprite.Sprite):
 		self.gs = gs
 		self.pos = sx, sy
 		self.start = sx, sy
+		self.fx = fx
 		self.fy = fy
 		self.da = 1
 
