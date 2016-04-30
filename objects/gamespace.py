@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import sys
 from city import City, Base
-from missile import Missile
+from missile import Missile, Bomb
 from explosion import Explosion
 from math import sqrt
 
@@ -127,39 +127,39 @@ class Gamespace(object):
 
 				#if 1-9 pressed, set off bomb
 				if event.key == pygame.K_1:
-					bomb = Missile(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 1, "bomb", self)
+					bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 1, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_2:
-					bomb = Missile(pos[0], 0, self.cities[0].rect.centerx, self.size[1] - self.city_width, 3, "bomb", self)
+					bomb = Bomb(pos[0], 0, self.cities[0].rect.centerx, self.size[1] - self.city_width, 3, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_3:
-					bomb = Missile(pos[0], 0, self.cities[1].rect.centerx, self.size[1] - self.city_width, 3, "bomb", self)
+					bomb = Bomb(pos[0], 0, self.cities[1].rect.centerx, self.size[1] - self.city_width, 3, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_4:
-					bomb = Missile(pos[0], 0, self.cities[2].rect.centerx, self.size[1] - self.city_width, 3, "bomb",self)
+					bomb = Bomb(pos[0], 0, self.cities[2].rect.centerx, self.size[1] - self.city_width, 3,self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_5:
-					bomb = Missile(pos[0], 0, self.bases[1].rect.centerx, self.size[1] - self.city_width, 3, "bomb",self)
+					bomb = Bomb(pos[0], 0, self.bases[1].rect.centerx, self.size[1] - self.city_width, 3,self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_6:
-					bomb = Missile(pos[0], 0, self.cities[3].rect.centerx, self.size[1] - self.city_width, 3, "bomb",self)
+					bomb = Bomb(pos[0], 0, self.cities[3].rect.centerx, self.size[1] - self.city_width, 3,self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_7:
-					bomb = Missile(pos[0], 0, self.cities[4].rect.centerx, self.size[1] - self.city_width, 3, "bomb",self)
+					bomb = Bomb(pos[0], 0, self.cities[4].rect.centerx, self.size[1] - self.city_width, 3,self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_8:
-					bomb = Missile(pos[0], 0, self.cities[5].rect.centerx, self.size[1] - self.city_width, 3, "bomb",self)
+					bomb = Bomb(pos[0], 0, self.cities[5].rect.centerx, self.size[1] - self.city_width, 3,self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_9:
-					bomb = Missile(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, 3, "bomb",self)
+					bomb = Bomb(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, 3,self)
 					self.bombs.append(bomb)
 
 
@@ -167,19 +167,19 @@ class Gamespace(object):
 				if event.key == pygame.K_a:
 					if (self.bases[0].count > 0):
 						self.bases[0].count = self.bases[0].count - 1
-						missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
+						missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, self)
 						self.missiles.append(missile)
 				
 				if event.key == pygame.K_s:
 					if (self.bases[1].count > 0):
 						self.bases[1].count = self.bases[1].count - 1
-						missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
+						missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, self)
 						self.missiles.append(missile)
 
 				if event.key == pygame.K_d:
 					if (self.bases[2].count > 0):
 						self.bases[2].count = self.bases[2].count - 1
-						missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
+						missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, self)
 						self.missiles.append(missile)
 
 	def check_collisions(self):

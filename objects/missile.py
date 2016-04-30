@@ -4,7 +4,7 @@ from math import atan2, sin, cos
 
 class Missile(pygame.sprite.Sprite):
 
-	def __init__(self, sx, sy, fx, fy, v, t, gs=None):
+	def __init__(self, sx, sy, fx, fy, v, gs=None):
 
 		pygame.sprite.Sprite.__init__(self)
 
@@ -20,7 +20,25 @@ class Missile(pygame.sprite.Sprite):
 		self.dx = -1 * v * cos(angle)
 		self.dy = -1 * v * sin(angle)
 
-		self.t = t
+	def tick(self):
+
+		#update x and y positions
+		x = self.pos[0] + self.dx
+		y = self.pos[1] + self.dy
+
+		self.pos = x, y
+
+		#if missile has reached its destination, it should die
+		if (self.pos[1] <= self.fy):
+			self.da = 0
+
+	def draw(self):
+		pygame.draw.line(self.gs.screen, (0, 255, 0), self.start, self.pos)
+
+class Bomb(Missile):
+
+	def __init__(self, sx, sy, fx, fy, v, gs=None):
+		Missile.__init__(self, sx, sy, fx, fy, v, gs)
 
 	def tick(self):
 
@@ -30,12 +48,6 @@ class Missile(pygame.sprite.Sprite):
 
 		self.pos = x, y
 
-		#if missile has reached its destination, it should 
-		if (self.pos[1] >= self.fy and self.t == "bomb"):
+		#if missile has reached its destination, it should die
+		if (self.pos[1] >= self.fy):
 			self.da = 0
-
-		elif (self.pos[1] <= self.fy and self.t == "missile"):
-			self.da = 0
-
-	def draw(self):
-		pygame.draw.line(self.gs.screen, (0, 255, 0), self.start, self.pos)
