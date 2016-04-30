@@ -104,7 +104,16 @@ class Gamespace(object):
 			self.bombs[i].tick()
 
 			#check if bomb is dead; if so, create explosion and pop off of list
+			#also, make city or base "dead"
 			if (self.bombs[i].da == 0):
+				dest = self.bombs[i].dest #get destination 0-8 of bomb
+
+				#if destination is a base, set count to 0
+				if (dest % 4 == 0):
+					self.bases[dest/4].count = 0
+
+				#else if destination is a city, destroy it
+
 				explosion = Explosion(self.bombs[i].fx, self.bombs[i].fy, 2, 50, self)
 				self.bomb_explosions.append(explosion)
 				del self.bombs[i]
@@ -127,39 +136,39 @@ class Gamespace(object):
 
 				#if 1-9 pressed, set off bomb
 				if event.key == pygame.K_1:
-					bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 1, self)
+					bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 1, 0, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_2:
-					bomb = Bomb(pos[0], 0, self.cities[0].rect.centerx, self.size[1] - self.city_width, 3, self)
+					bomb = Bomb(pos[0], 0, self.cities[0].rect.centerx, self.size[1] - self.city_width, 3, 1, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_3:
-					bomb = Bomb(pos[0], 0, self.cities[1].rect.centerx, self.size[1] - self.city_width, 3, self)
+					bomb = Bomb(pos[0], 0, self.cities[1].rect.centerx, self.size[1] - self.city_width, 3, 2, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_4:
-					bomb = Bomb(pos[0], 0, self.cities[2].rect.centerx, self.size[1] - self.city_width, 3,self)
+					bomb = Bomb(pos[0], 0, self.cities[2].rect.centerx, self.size[1] - self.city_width, 3, 3, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_5:
-					bomb = Bomb(pos[0], 0, self.bases[1].rect.centerx, self.size[1] - self.city_width, 3,self)
+					bomb = Bomb(pos[0], 0, self.bases[1].rect.centerx, self.size[1] - self.city_width, 3, 4, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_6:
-					bomb = Bomb(pos[0], 0, self.cities[3].rect.centerx, self.size[1] - self.city_width, 3,self)
+					bomb = Bomb(pos[0], 0, self.cities[3].rect.centerx, self.size[1] - self.city_width, 3, 5, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_7:
-					bomb = Bomb(pos[0], 0, self.cities[4].rect.centerx, self.size[1] - self.city_width, 3,self)
+					bomb = Bomb(pos[0], 0, self.cities[4].rect.centerx, self.size[1] - self.city_width, 3, 6, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_8:
-					bomb = Bomb(pos[0], 0, self.cities[5].rect.centerx, self.size[1] - self.city_width, 3,self)
+					bomb = Bomb(pos[0], 0, self.cities[5].rect.centerx, self.size[1] - self.city_width, 3, 7, self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_9:
-					bomb = Bomb(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, 3,self)
+					bomb = Bomb(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, 3, 8, self)
 					self.bombs.append(bomb)
 
 
