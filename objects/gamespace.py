@@ -5,8 +5,19 @@ from city import City, Base
 from missile import Missile, Bomb
 from explosion import Explosion
 from math import sqrt
+from twisted.internet.defer import DeferredQueue
+import cPickle as pickle
+
+p1_data_queue = DeferredQueue()
+p1_command_queue = DeferredQueue()
+p2_data_queue = DeferredQueue()
+p2_command_queue = DeferredQueue()
 
 class Gamespace(object):
+
+	def __init__(self, current_player):
+		self.current_player = current_player
+
 	def main(self):
 
 		#initialize
@@ -94,7 +105,6 @@ class Gamespace(object):
 	def ticks(self):
 
 		# call ticks for each object
-
 		i = 0
 		while (i < len(self.missiles)):
 			self.missiles[i].tick()
@@ -134,6 +144,7 @@ class Gamespace(object):
 			#check if bomb is dead; if so, create explosion and pop off of list
 			#also, make city or base "dead"
 			if (self.bombs[i].da == 0):
+
 				dest = self.bombs[i].dest #get destination 0-8 of bomb
 
 				#if destination is a base, set count to 0
