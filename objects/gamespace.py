@@ -17,6 +17,8 @@ class Gamespace(object):
 
 		#active bombs and active missiles (empty at first)
 		self.missiles = []
+		missile = Missile(0, 0, 400, 400, 3, self)
+		self.missiles.append(missile)
 		self.bombs = []
 
 		while 1:
@@ -40,21 +42,13 @@ class Gamespace(object):
 
 		#draw cities
 		for city in self.cities:
-			pygame.draw.rect(self.screen, (255, 0 , 0), city.rect)
+			city.draw()
 
-		font = pygame.font.Font(None, 30)
-
-		#draw bases
 		for base in self.bases:
-			pygame.draw.rect(self.screen, (0, 255, 0), base.rect)
-			text = font.render(str(base.count), True, (0, 0, 255))
-			text_pos = text.get_rect()
-			text_pos.centerx = base.rect.centerx
-			text_pos.centery = base.rect.centery
-			self.screen.blit(text, text_pos)
+			base.draw()
 
 		for missile in self.missiles:
-			pygame.draw.line(self.screen, (0, 255, 0), missile.start, missile.pos)
+			missile.draw()
 
 		pygame.display.flip()
 
@@ -99,4 +93,3 @@ class Gamespace(object):
 			else:
 				city = City(20*(i+1) + i*width, self.size[1] - width,  width, width, self)
 				self.cities.append(city)
-

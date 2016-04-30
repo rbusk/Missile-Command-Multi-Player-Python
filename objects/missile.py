@@ -30,3 +30,6 @@ class Missile(pygame.sprite.Sprite):
 		#if missile has reached its destination, it should 
 		if (self.pos[0] >= self.fy):
 			self.da = 0
+
+	def draw(self):
+		pygame.draw.line(self.gs.screen, (0, 255, 0), self.start, self.pos)
