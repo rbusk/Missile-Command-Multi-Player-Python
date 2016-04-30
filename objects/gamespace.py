@@ -44,7 +44,9 @@ class Gamespace(object):
 
 		#draw cities
 		for city in self.cities:
-			city.draw()
+			#only draw if alive
+			if city.da == 1:
+				city.draw()
 
 		for base in self.bases:
 			base.draw()
@@ -113,6 +115,11 @@ class Gamespace(object):
 					self.bases[dest/4].count = 0
 
 				#else if destination is a city, destroy it
+				else:
+					if (dest <= 3):
+						self.cities[dest-1].da = 0
+					else:
+						self.cities[dest-2].da = 0
 
 				explosion = Explosion(self.bombs[i].fx, self.bombs[i].fy, 2, 50, self)
 				self.bomb_explosions.append(explosion)
