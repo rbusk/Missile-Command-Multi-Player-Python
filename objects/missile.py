@@ -16,8 +16,8 @@ class Missile(pygame.sprite.Sprite):
 
 		#calculate dx and dy
 		angle = atan2(sy - fy, sx - fx)
-		self.dx = abs(v * cos(angle))
-		self.dy = abs(v * sin(angle))
+		self.dx = -1 * v * cos(angle)
+		self.dy = -1 * v * sin(angle)
 
 	def tick(self):
 
@@ -28,7 +28,7 @@ class Missile(pygame.sprite.Sprite):
 		self.pos = x, y
 
 		#if missile has reached its destination, it should 
-		if (self.pos[0] >= self.fy):
+		if (self.pos[1] >= self.fy):
 			self.da = 0
 
 	def draw(self):
