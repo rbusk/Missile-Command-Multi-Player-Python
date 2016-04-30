@@ -20,7 +20,7 @@ class City(pygame.sprite.Sprite):
 		pass
 
 	def draw(self):
-		pygame.draw.rect(self.gs.screen, (255, 0 , 0), self.rect)
+		pygame.draw.rect(self.gs.screen, (0, 0, 255), self.rect)
 
 class Base(City):
 
