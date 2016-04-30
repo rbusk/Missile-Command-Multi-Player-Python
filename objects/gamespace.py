@@ -24,9 +24,12 @@ class Gamespace(object):
 		self.bomb_explosions = []
 
 		self.nbombs = 0 #keep track of how many bombs have been dropped
-		self.maxbombs = 30 #max number of bombs that can be dropped
+		self.maxbombs = 6 #max number of bombs that can be dropped
 
-		while 1:
+		#player 1 shoots missiles, player 2 drops bombs
+		winner = 0
+
+		while not winner:
 			#click tick
 			self.clock.tick(60)
 
@@ -38,6 +41,10 @@ class Gamespace(object):
 
 			#draw images
 			self.draw_images()
+
+			winner = self.check_winner()
+
+		print "game over, player", winner, "wins"
 
 
 	def draw_images(self):
@@ -149,7 +156,7 @@ class Gamespace(object):
 
 					#if 1-9 pressed, set off bomb
 					if event.key == pygame.K_1:
-						bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 1, 0, self)
+						bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 3, 0, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
@@ -250,3 +257,21 @@ class Gamespace(object):
 				self.cities.append(city)
 
 		self.city_width = width
+
+	def check_winner(self):
+
+		#check cities -- if they are all dead, then player 2 wins
+		ncities_dead = 0
+		for city in self.cities:
+			if city.da == 0:
+				ncities_dead = ncities_dead + 1
+
+		if ncities_dead == len(self.cities):
+			return 2
+
+		#if player 2 has dropped all of his bombs and all of them have exploded, then player 1 wins
+		elif (self.nbombs >= self.maxbombs and len(self.bomb_explosions) == 0 and len(self.bombs) == 0):
+			return 1
+
+		else:
+			return 0
