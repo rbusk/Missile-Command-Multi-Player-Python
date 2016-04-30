@@ -27,9 +27,18 @@ class Gamespace(object):
 		self.maxbombs = 6 #max number of bombs that can be dropped
 
 		#player 1 shoots missiles, player 2 drops bombs
-		winner = 0
+		gameover = 0
 
-		while not winner:
+		self.bomb_speed = 2
+		self.missile_speed = 2
+
+		self.player = 1 #1 or 2, depending on who is playing
+
+		#points for players 1 and 2
+		self.p1_points = 0
+		self.p2_points = 0
+
+		while not gameover:
 			#click tick
 			self.clock.tick(60)
 
@@ -42,9 +51,16 @@ class Gamespace(object):
 			#draw images
 			self.draw_images()
 
-			winner = self.check_winner()
+			gameover = self.check_winner()
 
-		print "game over, player", winner, "wins"
+		#calculate points for whoever is aiming missiles
+		if self.player == 1:
+			self.p1_points = self.p1_points + self.calculate_points()
+		else:
+			self.p2_points = self.p2_points + self.calculate_points()
+
+		print "p1:", self.p1_points
+		print "p2:", self.p2_points
 
 
 	def draw_images(self):
@@ -156,47 +172,47 @@ class Gamespace(object):
 
 					#if 1-9 pressed, set off bomb
 					if event.key == pygame.K_1:
-						bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 3, 0, self)
+						bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 0, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_2:
-						bomb = Bomb(pos[0], 0, self.cities[0].rect.centerx, self.size[1] - self.city_width, 3, 1, self)
+						bomb = Bomb(pos[0], 0, self.cities[0].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 1, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_3:
-						bomb = Bomb(pos[0], 0, self.cities[1].rect.centerx, self.size[1] - self.city_width, 3, 2, self)
+						bomb = Bomb(pos[0], 0, self.cities[1].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 2, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_4:
-						bomb = Bomb(pos[0], 0, self.cities[2].rect.centerx, self.size[1] - self.city_width, 3, 3, self)
+						bomb = Bomb(pos[0], 0, self.cities[2].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 3, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_5:
-						bomb = Bomb(pos[0], 0, self.bases[1].rect.centerx, self.size[1] - self.city_width, 3, 4, self)
+						bomb = Bomb(pos[0], 0, self.bases[1].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 4, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_6:
-						bomb = Bomb(pos[0], 0, self.cities[3].rect.centerx, self.size[1] - self.city_width, 3, 5, self)
+						bomb = Bomb(pos[0], 0, self.cities[3].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 5, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_7:
-						bomb = Bomb(pos[0], 0, self.cities[4].rect.centerx, self.size[1] - self.city_width, 3, 6, self)
+						bomb = Bomb(pos[0], 0, self.cities[4].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 6, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_8:
-						bomb = Bomb(pos[0], 0, self.cities[5].rect.centerx, self.size[1] - self.city_width, 3, 7, self)
+						bomb = Bomb(pos[0], 0, self.cities[5].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 7, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
 					if event.key == pygame.K_9:
-						bomb = Bomb(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, 3, 8, self)
+						bomb = Bomb(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 8, self)
 						self.bombs.append(bomb)
 						self.nbombs = self.nbombs + 1
 
@@ -204,19 +220,19 @@ class Gamespace(object):
 				if event.key == pygame.K_a:
 					if (self.bases[0].count > 0):
 						self.bases[0].count = self.bases[0].count - 1
-						missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, self)
+						missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, self)
 						self.missiles.append(missile)
 				
 				if event.key == pygame.K_s:
 					if (self.bases[1].count > 0):
 						self.bases[1].count = self.bases[1].count - 1
-						missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, self)
+						missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, self)
 						self.missiles.append(missile)
 
 				if event.key == pygame.K_d:
 					if (self.bases[2].count > 0):
 						self.bases[2].count = self.bases[2].count - 1
-						missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, self)
+						missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, self)
 						self.missiles.append(missile)
 
 	def check_collisions(self):
@@ -230,7 +246,14 @@ class Gamespace(object):
 
 				d = sqrt(dx*dx + dy*dy)
 
+				#if bomb is within the explosion, add points and delete the bomb
 				if (explosion.r > d):
+					if (self.player == 1):
+						self.p1_points = self.p1_points + 1
+						print "adding a point for p1"
+					else:
+						self.p2_points = self.p2_points + 2
+						print "adding a point for p2"
 					del self.bombs[i]
 				else:
 					i = i+1
@@ -267,7 +290,7 @@ class Gamespace(object):
 				ncities_dead = ncities_dead + 1
 
 		if ncities_dead == len(self.cities):
-			return 2
+			return 1
 
 		#if player 2 has dropped all of his bombs and all of them have exploded, then player 1 wins
 		elif (self.nbombs >= self.maxbombs and len(self.bomb_explosions) == 0 and len(self.bombs) == 0):
@@ -275,3 +298,19 @@ class Gamespace(object):
 
 		else:
 			return 0
+
+	#calculate points for player aiming missiles
+	def calculate_points(self):
+
+		points = 0
+
+		#points for each missile left
+		for base in self.bases:
+			points = points + base.count
+
+		#points for each city left
+		for city in self.cities:
+			if city.da == 1:
+				points = points + 1
+
+		return points
