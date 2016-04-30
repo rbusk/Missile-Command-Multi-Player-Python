@@ -4,6 +4,7 @@ import sys
 from city import City, Base
 from missile import Missile
 from explosion import Explosion
+from math import sqrt
 
 class Gamespace(object):
 	def main(self):
@@ -94,6 +95,8 @@ class Gamespace(object):
 			else:
 				i = i+1
 
+		self.check_collisions()
+
 	def handle_events(self):
 
 		for event in pygame.event.get():
@@ -105,8 +108,10 @@ class Gamespace(object):
 			if event.type == KEYDOWN:
 
 				pos = pygame.mouse.get_pos()
+
+				#if 1-9 pressed, set off bomb
 				if event.key == pygame.K_1:
-					bomb = Missile(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 3, "bomb", self)
+					bomb = Missile(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, 1, "bomb", self)
 					self.bombs.append(bomb)
 
 				if event.key == pygame.K_2:
@@ -160,6 +165,22 @@ class Gamespace(object):
 						self.bases[2].count = self.bases[2].count - 1
 						missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
 						self.missiles.append(missile)
+
+	def check_collisions(self):
+
+		for explosion in self.explosions:
+			i = 0
+			while (i < len(self.bombs)):
+				#calculate distance from missile to explosion
+				dx = explosion.pos[0] - self.bombs[i].pos[0]
+				dy = explosion.pos[1] - self.bombs[i].pos[1]
+
+				d = sqrt(dx*dx + dy*dy)
+
+				if (explosion.r > d):
+					del self.bombs[i]
+				else:
+					i = i+1
 
 
 	def initialize_cities_bases(self):
