@@ -141,17 +141,25 @@ class Gamespace(object):
 					bomb = Missile(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, 3, "bomb",self)
 					self.bombs.append(bomb)
 
+
+				#fire missiles from bases with a, s, d. First make sure that there are enough missiles left in the base
 				if event.key == pygame.K_a:
-					missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
-					self.missiles.append(missile)
+					if (self.bases[0].count > 0):
+						self.bases[0].count = self.bases[0].count - 1
+						missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
+						self.missiles.append(missile)
 				
 				if event.key == pygame.K_s:
-					missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
-					self.missiles.append(missile)
+					if (self.bases[1].count > 0):
+						self.bases[1].count = self.bases[1].count - 1
+						missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
+						self.missiles.append(missile)
 
 				if event.key == pygame.K_d:
-					missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
-					self.missiles.append(missile)
+					if (self.bases[2].count > 0):
+						self.bases[2].count = self.bases[2].count - 1
+						missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], 3, "missile", self)
+						self.missiles.append(missile)
 
 
 	def initialize_cities_bases(self):
