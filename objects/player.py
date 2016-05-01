@@ -4,26 +4,28 @@ import sys
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
+from client_gs import *
 
-PLAYER = 0
 TYPE = None
 PLAYER_1 = 40003
 PLAYER_2 = 40008
 HOST = '127.0.0.1'
 
+gs = Gamespace()
+
 class Player(Protocol):
 	def dataReceived(self,data):
-		print data
 		if data == 'Missiles' or data == 'Bombs':
-			TYPE = data
-			print TYPE
+			self.TYPE = data
+			self.lc = LoopingCall(gs.ticks, self.TYPE)
+			self.lc.start(1./60)
 
 
 	def connectionMade(self):
-		print 'Made connection'
+		pass
 
 	def connectionLost(self,reason):
-		print 'Connection Lost'
 		reactor.stop()
 
 class ClientConnFactory(ClientFactory):
@@ -38,7 +40,8 @@ if __name__ == '__main__':
 			break
 		if args == "2":
 			PLAYER = 2
-			reactor.connectTCP(HOST,PLAYER_1,ClientConnFactory())
+			reactor.connectTCP(HOST,PLAYER_2,ClientConnFactory())
 			break
+	print TYPE
 	reactor.run()
 
