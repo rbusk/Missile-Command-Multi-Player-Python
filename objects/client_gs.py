@@ -80,6 +80,12 @@ class Gamespace(object):
 		textpos.y = 0
 		self.screen.blit(text,textpos)
 
+		font2 = pygame.font.Font(None, 36)
+		text2 = font.render(str(self.p2_points),1,(255,0,0))
+		textpos2 = text2.get_rect()
+		textpos2.x = self.size[0]-20
+		textpos2.y = 0
+		self.screen.blit(text2,textpos2)
 
 		pygame.display.flip()
 
