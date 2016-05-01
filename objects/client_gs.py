@@ -169,6 +169,9 @@ class Gamespace(object):
 
 			if event.type == KEYDOWN:
 
+				bomb = None
+				missile = None
+
 				pos = pygame.mouse.get_pos()
 
 				if self.TYPE == "Bombs":
@@ -206,7 +209,7 @@ class Gamespace(object):
 
 						if bomb != None:
 							data = pickle.dumps(bomb)
-							data_queue.put(data)
+							command_queue.put(data)
 							bomb.gs = self
 							self.bombs.append(bomb)
 							self.nbombs = self.nbombs + 1
@@ -230,8 +233,7 @@ class Gamespace(object):
 
 					if missile != None:
 						data = pickle.dumps(missile)
-						data_queue.put(data)
-						print data
+						command_queue.put(data)
 						missile.gs = self
 						self.missiles.append(missile)
 
