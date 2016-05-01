@@ -2,6 +2,7 @@ import sys
 from twisted.internet.protocol import Factory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
+from twisted.internet.defer import DeferredQueue
 
 PLAYER_1_PORT = 40003
 PLAYER_2_PORT = 40008
@@ -16,12 +17,13 @@ p2_data_queue = DeferredQueue()
 class Player1Conn(Protocol):
 	def __init__(self,addr):
 		self.addr = addr
-		p2_data_queue.get().addCallback(self.callback)
 
 	def dataReceived(self,data):
+		print data
 		p1_data_queue.put(data)
 
 	def connectionMade(self):
+		p2_data_queue.get().addCallback(self.callback)
 		print 'New conenction from', self.addr
 		global NUMBER_OF_PLAYERS
 		print NUMBER_OF_PLAYERS
@@ -38,7 +40,7 @@ class Player1Conn(Protocol):
 
 	def callback(self,data):
 		self.transport.write(data)
-		p2_command_queue.get().addCallback(self.callback)
+		p2_data_queue.get().addCallback(self.callback)
 
 class Player1ConnFactory(Factory):
 	def __init__(self):
@@ -51,12 +53,13 @@ class Player1ConnFactory(Factory):
 class Player2Conn(Protocol):
 	def __init__(self,addr):
 		self.addr = addr
-		p1_data_queue.get().addCallback(self.callback)
 
 	def dataReceived(self,data):
+		print data
 		p2_data_queue.put(data)
 
 	def connectionMade(self):
+		p1_data_queue.get().addCallback(self.callback)
 		print 'New conenction from', self.addr
 		global NUMBER_OF_PLAYERS
 		print NUMBER_OF_PLAYERS
@@ -73,7 +76,7 @@ class Player2Conn(Protocol):
 
 	def callback(self,data):
 		self.transport.write(data)
-		p1_command_queue.get().addCallback(self.callback)
+		p1_data_queue.get().addCallback(self.callback)
 
 class Player2ConnFactory(Factory):
 	def __init__(self):
