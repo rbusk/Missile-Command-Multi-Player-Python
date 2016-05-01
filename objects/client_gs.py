@@ -17,6 +17,7 @@ class Gamespace(object):
 
 	def __init__(self, current_player=0):
 		self.TYPE = None
+		self.roundover = 0
 		self.current_player = current_player
 		#initialize
 		pygame.init()
@@ -85,70 +86,89 @@ class Gamespace(object):
 	def ticks(self,TYPE):
 
 		self.TYPE = TYPE
-
-		self.handle_events()
-		self.draw_images()
-		# call ticks for each object
-		i = 0
-		while (i < len(self.missiles)):
-			self.missiles[i].tick()
-
-			#check if missile is dead; if so, create explosion and pop off of list
-			if (self.missiles[i].da == 0):
-				explosion = Explosion(self.missiles[i].fx, self.missiles[i].fy, 2, 50, self)
-				self.explosions.append(explosion)
-				del self.missiles[i]
-			else:
-				i = i+1
-
-		i = 0
-		while (i < len(self.explosions)):
-			self.explosions[i].tick()
-
-			#check if explosion is dead; if so, pop off of list
-			if (self.explosions[i].da == 0):
-				del self.explosions[i]
-			else:
-				i = i+1
 		
-		i = 0
-		while (i < len(self.bomb_explosions)):
-			self.bomb_explosions[i].tick()
+		if not self.roundover:
 
-			#check if explosion is dead; if so, pop off of list
-			if (self.bomb_explosions[i].da == 0):
-				del self.bomb_explosions[i]
-			else:
-				i = i+1
+			self.handle_events()
+			self.draw_images()
+			# call ticks for each object
+			i = 0
+			while (i < len(self.missiles)):
+				self.missiles[i].tick()
 
-		i = 0
-		while (i < len(self.bombs)):
-			self.bombs[i].tick()
-
-			#check if bomb is dead; if so, create explosion and pop off of list
-			#also, make city or base "dead"
-			if (self.bombs[i].da == 0):
-
-				dest = self.bombs[i].dest #get destination 0-8 of bomb
-
-				#if destination is a base, set count to 0
-				if (dest % 4 == 0):
-					self.bases[dest/4].count = 0
-
-				#else if destination is a city, destroy it
+				#check if missile is dead; if so, create explosion and pop off of list
+				if (self.missiles[i].da == 0):
+					explosion = Explosion(self.missiles[i].fx, self.missiles[i].fy, 2, 50, self)
+					self.explosions.append(explosion)
+					del self.missiles[i]
 				else:
-					if (dest <= 3):
-						self.cities[dest-1].da = 0
+					i = i+1
+
+			i = 0
+			while (i < len(self.explosions)):
+				self.explosions[i].tick()
+
+				#check if explosion is dead; if so, pop off of list
+				if (self.explosions[i].da == 0):
+					del self.explosions[i]
+				else:
+					i = i+1
+			
+			i = 0
+			while (i < len(self.bomb_explosions)):
+				self.bomb_explosions[i].tick()
+
+				#check if explosion is dead; if so, pop off of list
+				if (self.bomb_explosions[i].da == 0):
+					del self.bomb_explosions[i]
+				else:
+					i = i+1
+
+			i = 0
+			while (i < len(self.bombs)):
+				self.bombs[i].tick()
+
+				#check if bomb is dead; if so, create explosion and pop off of list
+				#also, make city or base "dead"
+				if (self.bombs[i].da == 0):
+
+					dest = self.bombs[i].dest #get destination 0-8 of bomb
+
+					#if destination is a base, set count to 0
+					if (dest % 4 == 0):
+						self.bases[dest/4].count = 0
+
+					#else if destination is a city, destroy it
 					else:
-						self.cities[dest-2].da = 0
+						if (dest <= 3):
+							self.cities[dest-1].da = 0
+						else:
+							self.cities[dest-2].da = 0
 
-				explosion = Explosion(self.bombs[i].fx, self.bombs[i].fy, 2, 50, self)
-				self.bomb_explosions.append(explosion)
-				del self.bombs[i]
-			else:
-				i = i+1
+					explosion = Explosion(self.bombs[i].fx, self.bombs[i].fy, 2, 50, self)
+					self.bomb_explosions.append(explosion)
+					del self.bombs[i]
+				else:
+					i = i+1
 
-		self.check_collisions()
+			self.check_collisions()
+			
+			self.roundover = self.check_round_over()
+
+			if self.roundover:
+
+				command_queue.put("Round Over")
+
+				#calculate points for whoever is aiming missiles
+				if self.player == 1:
+					self.p1_points = self.p1_points + self.calculate_points()
+				else:
+					self.p2_points = self.p2_points + self.calculate_points()
+
+				print "p1:", self.p1_points
+				print "p2:", self.p2_points
+
+				self.draw_images()
 
 	def handle_events(self):
 
@@ -210,17 +230,17 @@ class Gamespace(object):
 					if event.key == pygame.K_a:
 						if (self.bases[0].count > 0):
 							self.bases[0].count = self.bases[0].count - 1
-							missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed)
+							missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, 0)
 					
 					if event.key == pygame.K_s:
 						if (self.bases[1].count > 0):
 							self.bases[1].count = self.bases[1].count - 1
-							missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed)
+							missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, 1)
 
 					if event.key == pygame.K_d:
 						if (self.bases[2].count > 0):
 							self.bases[2].count = self.bases[2].count - 1
-							missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed)
+							missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, 2)
 
 					if missile != None:
 						data = pickle.dumps(missile)
@@ -272,7 +292,7 @@ class Gamespace(object):
 
 		self.city_width = width
 
-	def check_winner(self):
+	def check_round_over(self):
 
 		#check cities -- if they are all dead, then player 2 wins
 		ncities_dead = 0
@@ -343,8 +363,10 @@ class Gamespace(object):
 		#determine if object is Missile or Bomb and append to correct list
 		if d.TYPE == "Missile":
 			self.missiles.append(d)
+			self.bases[d.source].count -= 1
 
 		elif d.TYPE == "Bomb":
 			self.bombs.append(d)
+			self.nbombs = self.nbombs + 1
 
 		data_queue.get().addCallback(self.callback)

@@ -19,7 +19,8 @@ class Player1Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		p1_data_queue.put(data)
+		if data != "Round Over":
+			p1_data_queue.put(data)
 
 	def connectionMade(self):
 		p2_data_queue.get().addCallback(self.callback)
@@ -54,7 +55,8 @@ class Player2Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		p2_data_queue.put(data)
+		if data != "Round Over":
+			p2_data_queue.put(data)
 
 	def connectionMade(self):
 		p1_data_queue.get().addCallback(self.callback)

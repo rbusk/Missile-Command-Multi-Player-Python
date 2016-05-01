@@ -4,7 +4,7 @@ from math import atan2, sin, cos
 
 class Missile(pygame.sprite.Sprite):
 
-	def __init__(self, sx, sy, fx, fy, v, gs=None):
+	def __init__(self, sx, sy, fx, fy, v, source, gs=None):
 
 		pygame.sprite.Sprite.__init__(self)
 		self.TYPE = "Missile"
@@ -14,6 +14,7 @@ class Missile(pygame.sprite.Sprite):
 		self.fx = fx
 		self.fy = fy
 		self.da = 1
+		self.source = source
 
 		#calculate dx and dy
 		angle = atan2(sy - fy, sx - fx)
