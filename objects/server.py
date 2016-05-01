@@ -8,6 +8,9 @@ PLAYER_1_PORT = 40003
 PLAYER_2_PORT = 40008
 global NUMBER_OF_PLAYERS
 NUMBER_OF_PLAYERS = 0
+round_over = 0
+turn_over = 0
+game_over = 0
 
 p1_data_queue = DeferredQueue()
 p2_data_queue = DeferredQueue()
@@ -19,7 +22,26 @@ class Player1Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		if data != "Round Over":
+		global round_over
+		if data is "Round Over":
+			round_over += 1
+			if round_over == 2:
+				p1_data_queue.put("Round Over")
+				p2_data_queue.put("Round Over")
+				round_over = 0
+		elif data is "Turn Over":
+			turn_over += 1
+			if turn_over == 2:
+				p1_data_queue.put("Turn Over")
+				p2_data_queue.put("Turn Over")
+				turn_over = 0
+		elif data is "Game Over":
+			game_over += 1
+			if game_over == 2:
+				p1_data_queue.put("Game Over")
+				p2_data_queue.put("Game Over")
+				game_over = 0
+		else:
 			p1_data_queue.put(data)
 
 	def connectionMade(self):
@@ -55,7 +77,26 @@ class Player2Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		if data != "Round Over":
+		global round_over,turn_over
+		if data is "Round Over":
+			round_over += 1
+			if round_over == 2:
+				p1_data_queue.put("Round Over")
+				p2_data_queue.put("Round Over")
+				round_over = 0
+		elif data is "Turn Over":
+			turn_over += 1
+			if turn_over == 2:
+				p1_data_queue.put("Turn Over")
+				p2_data_queue.put("Turn Over")
+				turn_over = 0
+		elif data is "Game Over":
+			game_over += 1
+			if game_over == 2:
+				p1_data_queue.put("Game Over")
+				p2_data_queue.put("Game Over")
+				game_over = 0
+		else:
 			p2_data_queue.put(data)
 
 	def connectionMade(self):
