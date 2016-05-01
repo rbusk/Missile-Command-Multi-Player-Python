@@ -15,6 +15,9 @@ class Explosion(pygame.sprite.Sprite):
 		self.gs = gs
 		self.da = 1
 
+	def __getstate__(self):
+		return {"pos": self.pos, "r": self.r, "dr": self.dr, "maxr": self.maxr, "da": self.da}
+
 	def tick(self):
 
 		#increase radius
