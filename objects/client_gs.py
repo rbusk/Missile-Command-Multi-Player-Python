@@ -227,17 +227,17 @@ class Gamespace(object):
 					if event.key == pygame.K_a:
 						if (self.bases[0].count > 0):
 							self.bases[0].count = self.bases[0].count - 1
-							missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed)
+							missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, 0)
 					
 					if event.key == pygame.K_s:
 						if (self.bases[1].count > 0):
 							self.bases[1].count = self.bases[1].count - 1
-							missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed)
+							missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, 1)
 
 					if event.key == pygame.K_d:
 						if (self.bases[2].count > 0):
 							self.bases[2].count = self.bases[2].count - 1
-							missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed)
+							missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, 2)
 
 					if missile != None:
 						data = pickle.dumps(missile)
@@ -332,6 +332,7 @@ class Gamespace(object):
 		#determine if object is Missile or Bomb and append to correct list
 		if d.TYPE == "Missile":
 			self.missiles.append(d)
+			self.bases[d.source].count -= 1
 
 		elif d.TYPE == "Bomb":
 			self.bombs.append(d)
