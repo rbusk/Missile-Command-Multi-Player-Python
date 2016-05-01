@@ -367,7 +367,8 @@ class Gamespace(object):
 		#determine if object is Missile or Bomb and append to correct list
 		if d.TYPE == "Missile":
 			self.missiles.append(d)
-			self.bases[d.source].count -= 1
+			if self.bases[d.source].count > 0:
+				self.bases[d.source].count -= 1 
 
 		elif d.TYPE == "Bomb":
 			self.bombs.append(d)
