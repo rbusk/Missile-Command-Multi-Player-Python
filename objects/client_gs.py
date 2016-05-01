@@ -19,25 +19,19 @@ class Gamespace(object):
 		self.TYPE = None
 		self.roundover = 0
 		self.current_player = current_player
-		#initialize
+
+		#initialize pygame
 		pygame.init()
 		self.size = width, height = 640, 480
 		self.screen = pygame.display.set_mode(self.size)
 
-		self.initialize_cities_bases()
+		self.initialize_cities()
 
-		#active bombs missiles and explosions(empty at first)
-		self.missiles = []
-		self.bombs = []
-		self.explosions = []
-		self.bomb_explosions = []
+		self.reset_round()
 
-		self.nbombs = 0 #keep track of how many bombs have been dropped
 		self.maxbombs = 6 #max number of bombs that can be dropped
 
 		#player 1 shoots missiles, player 2 drops bombs
-		self.gameover = 0
-
 		self.bomb_speed = 2
 		self.missile_speed = 2
 
@@ -74,14 +68,14 @@ class Gamespace(object):
 			explosion.draw()
 
 		font = pygame.font.Font(None, 36)
-		text = font.render(str(self.p1_points),1,(255,0,0))
+		text = font.render(str(self.p1_points),1,(204,0,0))
 		textpos = text.get_rect()
 		textpos.x = 0
 		textpos.y = 0
 		self.screen.blit(text,textpos)
 
 		font2 = pygame.font.Font(None, 36)
-		text2 = font.render(str(self.p2_points),1,(255,0,0))
+		text2 = font.render(str(self.p2_points),1,(204,0,0))
 		textpos2 = text2.get_rect()
 		textpos2.x = self.size[0]-40
 		textpos2.y = 0
@@ -163,16 +157,23 @@ class Gamespace(object):
 
 			if self.roundover:
 
-				command_queue.put("Round Over")
+				if self.check_turn_over():
+					command_queue.put("Turn Over")
+					print 'turn over'
+					self.draw_images()
 
-				#calculate points for whoever is aiming missiles
+				else:
+					print 'round over'
+					command_queue.put("Round Over")
 
-				self.calculate_points()
+					#calculate points for whoever is aiming missiles
 
-				print "p1:", self.p1_points
-				print "p2:", self.p2_points
+					self.calculate_points()
 
-				self.draw_images()
+					print "p1:", self.p1_points
+					print "p2:", self.p2_points
+
+					#self.draw_images()
 
 	def handle_events(self):
 
@@ -274,10 +275,9 @@ class Gamespace(object):
 					i = i+1
 
 
-	def initialize_cities_bases(self):
+	def initialize_bases(self):
 
-		#initialize cities and bases list
-		self.cities = []
+		#initialize bases list
 		self.bases = []
 
 		#calculate what width/height of each city/base should be
@@ -290,10 +290,21 @@ class Gamespace(object):
 			if (i % 4 == 0):
 				base = Base(20*(i+1) + i*width, self.size[1] - width,  width, width, 9, self)
 				self.bases.append(base)
-			else:
+
+	def initialize_cities(self):
+		self.cities = []
+		
+		#calculate what width/height of each city/base should be
+		width = (self.size[0] - 200) / 9
+
+		#initialize and bases
+		for i in range(0, 9):
+
+			# if i is 0, 4, or 8, then create a base instead of a city
+			if (i % 4 != 0):
 				city = City(20*(i+1) + i*width, self.size[1] - width,  width, width, self)
 				self.cities.append(city)
-
+	
 		self.city_width = width
 
 	def check_round_over(self):
@@ -313,6 +324,17 @@ class Gamespace(object):
 
 		else:
 			return 0
+
+	def check_turn_over(self):
+
+		#check if all of cities are dead -- if so, then game is over
+		ncities_dead = 0
+		for city in self.cities:
+			if city.da == 0:
+				ncities_dead = ncities_dead + 1
+
+		if ncities_dead == len(self.cities):
+			return 1
 
 	#calculate points for player aiming missiles
 	def calculate_points(self):
@@ -344,8 +366,20 @@ class Gamespace(object):
 
 		
 
-	def reset(self):
-		self.initialize_cities_bases()
+	#use to initialize game or to reset game when both turns are up
+	def reset_turn(self):
+
+		if self.TYPE == "Missiles":
+			self.TYPE == "Bombs"
+		elif self.TYPE == "Bombs":
+			self.TYPE == "Missiles"
+
+		self.initialize_cities()
+
+		self.reset_round()
+
+	def reset_round(self):
+		self.initialize_bases()
 
 		#active bombs missiles and explosions(empty at first)
 		self.missiles = []
@@ -356,7 +390,6 @@ class Gamespace(object):
 		self.nbombs = 0 #keep track of how many bombs have been dropped
 
 		self.roundover = 0
-
 
 	def callback(self, data):
 

@@ -10,8 +10,8 @@ from client_gs import *
 TYPE = None
 PLAYER_1 = 40003
 PLAYER_2 = 40008
-#HOST = '127.0.0.1'
-HOST = '10.176.31.106'
+HOST = '127.0.0.1'
+#HOST = '10.176.31.106'
 
 gs = Gamespace()
 
