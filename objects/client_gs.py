@@ -47,13 +47,6 @@ class Gamespace(object):
 		self.p1_points = 0
 		self.p2_points = 0
 
-	def main(self):
-
-		#tick updates
-		self.ticks()
-
-
-
 	def draw_images(self):
 		#black screen
 		black = 0, 0, 0
@@ -166,6 +159,8 @@ class Gamespace(object):
 
 				print "p1:", self.p1_points
 				print "p2:", self.p2_points
+
+				self.draw_images()
 
 	def handle_events(self):
 
