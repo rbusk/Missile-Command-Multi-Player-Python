@@ -92,6 +92,7 @@ class Gamespace(object):
 		pygame.display.flip()
 
 	def ticks(self,TYPE):
+
 		self.TYPE = TYPE
 
 		self.handle_events()
@@ -316,3 +317,17 @@ class Gamespace(object):
 				points = points + 1
 
 		return points
+
+	def callback(self, data):
+
+		#unpickle data
+		d = pickle.loads(data)
+		d.gs = self
+
+		#determine if object is Missile or Bomb and append to correct list
+		if d.TYPE == "Missile":
+			self.missiles.append(d)
+			print 'hi'
+
+		elif d.TYPE == "Bomb":
+			self.bombs.append(d)
