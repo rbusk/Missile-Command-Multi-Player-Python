@@ -46,23 +46,6 @@ class Gamespace(object):
 		self.p1_points = 0
 		self.p2_points = 0
 
-	def main(self):
-
-		#tick updates
-		self.ticks()
-
-		self.gameover = self.check_winner()
-
-		#calculate points for whoever is aiming missiles
-		if self.player == 1:
-			self.p1_points = self.p1_points + self.calculate_points()
-		else:
-			self.p2_points = self.p2_points + self.calculate_points()
-
-		print "p1:", self.p1_points
-		print "p2:", self.p2_points
-
-
 	def draw_images(self):
 		#black screen
 		black = 0, 0, 0
@@ -88,6 +71,14 @@ class Gamespace(object):
 
 		for explosion in self.bomb_explosions:
 			explosion.draw()
+
+		font = pygame.font.Font(None, 36)
+		text = font.render(str(self.p1_points),1,(255,0,0))
+		textpos = text.get_rect()
+		textpos.x = 0
+		textpos.y = 0
+		self.screen.blit(text,textpos)
+
 
 		pygame.display.flip()
 
@@ -250,7 +241,7 @@ class Gamespace(object):
 
 				#if bomb is within the explosion, add points and delete the bomb
 				if (explosion.r > d):
-					if (self.player == 1):
+					if self.TYPE == "Missiles":
 						self.p1_points = self.p1_points + 1
 					else:
 						self.p2_points = self.p2_points + 2
@@ -304,16 +295,44 @@ class Gamespace(object):
 
 		points = 0
 
-		#points for each missile left
-		for base in self.bases:
-			points = points + base.count
+		if self.TYPE == "Missiles":
+			#points for each missile left
+			for base in self.bases:
+				points = points + base.count
 
-		#points for each city left
-		for city in self.cities:
-			if city.da == 1:
-				points = points + 1
+			#points for each city left
+			for city in self.cities:
+				if city.da == 1:
+					points = points + 1
+			self.p1_points += points
 
-		return points
+		points = 0
+		if self.TYPE == "Bombs":
+			for base in self.bases:
+				points = points + base.count
+
+			#points for each city left
+			for city in self.cities:
+				if city.da == 1:
+					points = points + 1
+			self.p2_points += points
+
+
+		
+
+	def reset(self):
+		self.initialize_cities_bases()
+
+		#active bombs missiles and explosions(empty at first)
+		self.missiles = []
+		self.bombs = []
+		self.explosions = []
+		self.bomb_explosions = []
+
+		self.nbombs = 0 #keep track of how many bombs have been dropped
+
+		self.roundover = 0
+
 
 	def callback(self, data):
 

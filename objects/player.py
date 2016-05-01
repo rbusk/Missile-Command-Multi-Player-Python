@@ -20,6 +20,12 @@ class Player(Protocol):
 			self.TYPE = data
 			self.lc = LoopingCall(gs.ticks, self.TYPE)
 			self.lc.start(1./60)
+		elif data == "Round Over":
+			if self.TYPE == 'Missiles':
+				self.TYPE = "Bombs"
+			else:
+				self.TYPE = "Missiles"
+			gs.reset()
 		else:
 			data_queue.put(data)
 
