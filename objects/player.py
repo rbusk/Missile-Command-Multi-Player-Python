@@ -10,8 +10,8 @@ from client_gs import *
 TYPE = None
 PLAYER_1 = 40003
 PLAYER_2 = 40008
-#HOST = '127.0.0.1'
-HOST = '10.176.31.106'
+HOST = '127.0.0.1'
+#HOST = '10.176.31.106'
 
 gs = Gamespace()
 
@@ -22,11 +22,7 @@ class Player(Protocol):
 			self.lc = LoopingCall(gs.ticks, self.TYPE)
 			self.lc.start(1./60)
 		elif data == "Round Over":
-			if self.TYPE == 'Missiles':
-				self.TYPE = "Bombs"
-			else:
-				self.TYPE = "Missiles"
-			gs.reset()
+			gs.reset_round()
 		else:
 			data_queue.put(data)
 
