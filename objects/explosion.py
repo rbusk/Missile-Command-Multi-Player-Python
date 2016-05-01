@@ -28,4 +28,4 @@ class Explosion(pygame.sprite.Sprite):
 			self.da = 0
 
 	def draw(self):
-		pygame.draw.circle(self.gs.screen, (255, 0, 0), self.pos, self.r)
+		pygame.draw.circle(self.gs.screen, (204, 0, 0), self.pos, self.r)

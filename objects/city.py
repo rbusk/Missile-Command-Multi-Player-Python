@@ -23,7 +23,7 @@ class City(pygame.sprite.Sprite):
 		pass
 
 	def draw(self):
-		pygame.draw.rect(self.gs.screen, (0, 0, 255), self.rect)
+		pygame.draw.rect(self.gs.screen, (0, 204, 204), self.rect)
 
 class Base(City):
 
@@ -36,11 +36,11 @@ class Base(City):
 		return {"x": self.x, "y": self.y, "h": self.h, "w": self.w, "da": self.da, "rect": self.rect, "count": self.count}
 
 	def draw(self):
-		pygame.draw.rect(self.gs.screen, (0, 255, 0), self.rect)
+		pygame.draw.rect(self.gs.screen, (0, 0, 204), self.rect)
 
 		font = pygame.font.Font(None, 30)
 
-		text = font.render(str(self.count), True, (0, 0, 255))
+		text = font.render(str(self.count), True, (0, 204, 204))
 		text_pos = text.get_rect()
 		text_pos.centerx = self.rect.centerx
 		text_pos.centery = self.rect.centery

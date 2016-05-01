@@ -34,7 +34,7 @@ class Missile(pygame.sprite.Sprite):
 			self.da = 0
 
 	def draw(self):
-		pygame.draw.line(self.gs.screen, (0, 255, 0), self.start, self.pos)
+		pygame.draw.line(self.gs.screen, (0, 204, 204), self.start, self.pos)
 
 class Bomb(Missile):
 
@@ -55,3 +55,5 @@ class Bomb(Missile):
 		#if missile has reached its destination, it should die
 		if (self.pos[1] >= self.fy):
 			self.da = 0
+	def draw(self):
+		pygame.draw.line(self.gs.screen, (133, 255, 10), self.start, self.pos)
