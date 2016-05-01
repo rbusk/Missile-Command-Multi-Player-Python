@@ -160,10 +160,8 @@ class Gamespace(object):
 				command_queue.put("Round Over")
 
 				#calculate points for whoever is aiming missiles
-				if self.player == 1:
-					self.p1_points = self.p1_points + self.calculate_points()
-				else:
-					self.p2_points = self.p2_points + self.calculate_points()
+
+				self.calculate_points()
 
 				print "p1:", self.p1_points
 				print "p2:", self.p2_points
