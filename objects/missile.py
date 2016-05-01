@@ -20,8 +20,8 @@ class Missile(pygame.sprite.Sprite):
 		self.dx = -1 * v * cos(angle)
 		self.dy = -1 * v * sin(angle)
 
-	def __getstate__(self):
-		return {"pos" : self.pos, "start": self.start, "fx": self.fx, "fy": self.fy, "da": self.da, "dx": self.dx, "dy": self.dy}
+#	def __getstate__(self):
+#		return {"pos" : self.pos, "start": self.start, "fx": self.fx, "fy": self.fy, "da": self.da, "dx": self.dx, "dy": self.dy}
 
 	def tick(self):
 
@@ -45,8 +45,8 @@ class Bomb(Missile):
 
 		self.dest = dest #destination (0-8) of bomb
 
-	def __getstate__(self):
-		return {"pos" : self.pos, "start": self.start, "fx": self.fx, "fy": self.fy, "da": self.da, "dx": self.dx, "dy": self.dy, "dest": self.dest}
+#	def __getstate__(self):
+#		return {"pos" : self.pos, "start": self.start, "fx": self.fx, "fy": self.fy, "da": self.da, "dx": self.dx, "dy": self.dy, "dest": self.dest}
 
 	def tick(self):
 
