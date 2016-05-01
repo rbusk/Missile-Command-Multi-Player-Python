@@ -10,10 +10,8 @@ import cPickle as pickle
 
 PLAYER = 0
 
-p1_data_queue = DeferredQueue()
-p1_command_queue = DeferredQueue()
-p2_data_queue = DeferredQueue()
-p2_command_queue = DeferredQueue()
+data_queue = DeferredQueue()
+command_queue = DeferredQueue()
 
 class Gamespace(object):
 

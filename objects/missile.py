@@ -7,7 +7,7 @@ class Missile(pygame.sprite.Sprite):
 	def __init__(self, sx, sy, fx, fy, v, gs=None):
 
 		pygame.sprite.Sprite.__init__(self)
-
+		self.TYPE = "Missile"
 		self.gs = gs
 		self.pos = sx, sy
 		self.start = sx, sy
@@ -41,6 +41,7 @@ class Bomb(Missile):
 		Missile.__init__(self, sx, sy, fx, fy, v, gs)
 
 		self.dest = dest #destination (0-8) of bomb
+		self.TYPE = "Bomb"
 
 	def tick(self):
 

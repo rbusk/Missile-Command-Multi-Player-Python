@@ -20,13 +20,20 @@ class Player(Protocol):
 			self.TYPE = data
 			self.lc = LoopingCall(gs.ticks, self.TYPE)
 			self.lc.start(1./60)
+		else:
+			data_queue.put(data)
 
 
 	def connectionMade(self):
-		pass
+		command_queue.get().addCallback(self.callback)
 
 	def connectionLost(self,reason):
 		reactor.stop()
+
+	def callback(self,data):
+		self.transport.write(data)
+		command_queue.get().addCallback(self.callback)
+
 
 class ClientConnFactory(ClientFactory):
 	def buildProtocol(self,addr):

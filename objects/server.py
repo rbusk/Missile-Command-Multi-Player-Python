@@ -1,8 +1,3 @@
-import pygame
-from pygame.locals import *
-from server_gamespace import *
-
-
 import sys
 from twisted.internet.protocol import Factory
 from twisted.internet.protocol import Protocol
@@ -13,14 +8,18 @@ PLAYER_2_PORT = 40008
 global NUMBER_OF_PLAYERS
 NUMBER_OF_PLAYERS = 0
 
+p1_data_queue = DeferredQueue()
+p2_data_queue = DeferredQueue()
+
 
 #Player 1
 class Player1Conn(Protocol):
 	def __init__(self,addr):
 		self.addr = addr
+		p2_data_queue.get().addCallback(self.callback)
 
 	def dataReceived(self,data):
-		print 'Received Data:', data
+		p1_data_queue.put(data)
 
 	def connectionMade(self):
 		print 'New conenction from', self.addr
@@ -32,12 +31,14 @@ class Player1Conn(Protocol):
 		elif NUMBER_OF_PLAYERS == 1:
 			NUMBER_OF_PLAYERS = 2
 			self.transport.write("Bombs")
-			game = Gamespace()
-			game.main()
 
 	def connectionLost(self,reason):
 		print 'Lost connection to', self.addr
 		reactor.stop()
+
+	def callback(self,data):
+		self.transport.write(data)
+		p2_command_queue.get().addCallback(self.callback)
 
 class Player1ConnFactory(Factory):
 	def __init__(self):
@@ -50,9 +51,10 @@ class Player1ConnFactory(Factory):
 class Player2Conn(Protocol):
 	def __init__(self,addr):
 		self.addr = addr
+		p1_data_queue.get().addCallback(self.callback)
 
 	def dataReceived(self,data):
-		print 'Received Data:', data
+		p2_data_queue.put(data)
 
 	def connectionMade(self):
 		print 'New conenction from', self.addr
@@ -68,6 +70,10 @@ class Player2Conn(Protocol):
 	def connectionLost(self,reason):
 		print 'Lost connection to', self.addr
 		reactor.stop()
+
+	def callback(self,data):
+		self.transport.write(data)
+		p1_command_queue.get().addCallback(self.callback)
 
 class Player2ConnFactory(Factory):
 	def __init__(self):
