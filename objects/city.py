@@ -16,6 +16,9 @@ class City(pygame.sprite.Sprite):
 
 		self.rect = Rect(self.x, self.y, self.h, self.w)
 
+	def __getstate__(self):
+		return {"x": self.x, "y": self.y, "h": self.h, "w": self.w, "da": self.da, "rect": self.rect}
+
 	def tick(self):
 		pass
 
@@ -28,6 +31,9 @@ class Base(City):
 
 		City.__init__(self, x, y, h, w, gs)
 		self.count = count
+
+	def __getstate__(self):
+		return {"x": self.x, "y": self.y, "h": self.h, "w": self.w, "da": self.da, "rect": self.rect, "count": self.count}
 
 	def draw(self):
 		pygame.draw.rect(self.gs.screen, (0, 255, 0), self.rect)
