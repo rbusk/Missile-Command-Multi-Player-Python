@@ -8,6 +8,8 @@ from math import sqrt
 from twisted.internet.defer import DeferredQueue
 import cPickle as pickle
 
+PLAYER = 0
+
 p1_data_queue = DeferredQueue()
 p1_command_queue = DeferredQueue()
 p2_data_queue = DeferredQueue()
@@ -15,16 +17,11 @@ p2_command_queue = DeferredQueue()
 
 class Gamespace(object):
 
-	def __init__(self, current_player):
+	def __init__(self, current_player=0):
+		self.TYPE = None
 		self.current_player = current_player
-
-	def main(self):
-
 		#initialize
-		#pygame.init()
 		self.size = width, height = 640, 480
-		#self.screen = pygame.display.set_mode(self.size)
-		self.clock = pygame.time.Clock()
 
 		self.initialize_cities_bases()
 
@@ -38,7 +35,7 @@ class Gamespace(object):
 		self.maxbombs = 6 #max number of bombs that can be dropped
 
 		#player 1 shoots missiles, player 2 drops bombs
-		gameover = 0
+		self.gameover = 0
 
 		self.bomb_speed = 2
 		self.missile_speed = 2
@@ -49,14 +46,19 @@ class Gamespace(object):
 		self.p1_points = 0
 		self.p2_points = 0
 
-		while not gameover:
-			#click tick
-			self.clock.tick(60)
+	def main(self):
 
-			#tick updates
-			self.ticks()
 
-			gameover = self.check_winner()
+		#click tick
+
+		#handle events
+
+		#tick updates
+		self.ticks()
+
+		#draw images
+
+		self.gameover = self.check_winner()
 
 		#calculate points for whoever is aiming missiles
 		if self.player == 1:
@@ -67,8 +69,12 @@ class Gamespace(object):
 		print "p1:", self.p1_points
 		print "p2:", self.p2_points
 
-	def ticks(self):
 
+
+	def ticks(self,TYPE):
+		self.TYPE = TYPE
+
+		self.handle_events()
 		# call ticks for each object
 		i = 0
 		while (i < len(self.missiles)):
@@ -130,6 +136,90 @@ class Gamespace(object):
 				i = i+1
 
 		self.check_collisions()
+
+	def handle_events(self):
+		print self.TYPE
+
+		for event in pygame.event.get():
+
+			#quit game
+			if event.type == QUIT:
+				sys.exit()
+
+			if event.type == KEYDOWN:
+
+				pos = pygame.mouse.get_pos()
+
+				if self.TYPE == "Bombs":
+
+					#if player still has bombs to drop
+					if (self.nbombs < self.maxbombs):
+
+						#if 1-9 pressed, set off bomb
+						if event.key == pygame.K_1:
+							bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 0, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_2:
+							bomb = Bomb(pos[0], 0, self.cities[0].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 1, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_3:
+							bomb = Bomb(pos[0], 0, self.cities[1].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 2, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_4:
+							bomb = Bomb(pos[0], 0, self.cities[2].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 3, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_5:
+							bomb = Bomb(pos[0], 0, self.bases[1].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 4, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_6:
+							bomb = Bomb(pos[0], 0, self.cities[3].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 5, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_7:
+							bomb = Bomb(pos[0], 0, self.cities[4].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 6, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_8:
+							bomb = Bomb(pos[0], 0, self.cities[5].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 7, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+						if event.key == pygame.K_9:
+							bomb = Bomb(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 8, self)
+							self.bombs.append(bomb)
+							self.nbombs = self.nbombs + 1
+
+				if self.TYPE == "Missiles":
+					#fire missiles from bases with a, s, d. First make sure that there are enough missiles left in the base
+					if event.key == pygame.K_a:
+						if (self.bases[0].count > 0):
+							self.bases[0].count = self.bases[0].count - 1
+							missile = Missile(self.bases[0].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, self)
+							self.missiles.append(missile)
+					
+					if event.key == pygame.K_s:
+						if (self.bases[1].count > 0):
+							self.bases[1].count = self.bases[1].count - 1
+							missile = Missile(self.bases[1].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, self)
+							self.missiles.append(missile)
+
+					if event.key == pygame.K_d:
+						if (self.bases[2].count > 0):
+							self.bases[2].count = self.bases[2].count - 1
+							missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, self)
+							self.missiles.append(missile)
 
 	def check_collisions(self):
 
