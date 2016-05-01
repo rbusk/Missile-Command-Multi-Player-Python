@@ -19,7 +19,6 @@ class Player1Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		print data
 		p1_data_queue.put(data)
 
 	def connectionMade(self):
@@ -55,7 +54,6 @@ class Player2Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		print data
 		p2_data_queue.put(data)
 
 	def connectionMade(self):

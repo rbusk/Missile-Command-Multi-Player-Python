@@ -160,7 +160,6 @@ class Gamespace(object):
 		self.check_collisions()
 
 	def handle_events(self):
-		#print self.TYPE
 
 		for event in pygame.event.get():
 
@@ -253,10 +252,8 @@ class Gamespace(object):
 				if (explosion.r > d):
 					if (self.player == 1):
 						self.p1_points = self.p1_points + 1
-						print "adding a point for p1"
 					else:
 						self.p2_points = self.p2_points + 2
-						print "adding a point for p2"
 					del self.bombs[i]
 				else:
 					i = i+1
@@ -327,7 +324,6 @@ class Gamespace(object):
 		#determine if object is Missile or Bomb and append to correct list
 		if d.TYPE == "Missile":
 			self.missiles.append(d)
-			print 'hi'
 
 		elif d.TYPE == "Bomb":
 			self.bombs.append(d)
