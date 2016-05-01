@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from gamespace import *
+from server_gamespace import *
 
 
 import sys
@@ -61,11 +61,9 @@ class Player2Conn(Protocol):
 		if NUMBER_OF_PLAYERS == 0:
 			NUMBER_OF_PLAYERS = 1
 			self.transport.write("Missiles")
-		if NUMBER_OF_PLAYERS == 1:
+		elif NUMBER_OF_PLAYERS == 1:
 			NUMBER_OF_PLAYERS = 2
 			self.transport.write("Bombs")
-			game = Gamespace()
-			game.main()
 
 	def connectionLost(self,reason):
 		print 'Lost connection to', self.addr
