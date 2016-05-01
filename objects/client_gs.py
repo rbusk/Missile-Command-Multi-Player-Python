@@ -327,3 +327,5 @@ class Gamespace(object):
 
 		elif d.TYPE == "Bomb":
 			self.bombs.append(d)
+
+		data_queue.get().addCallback(self.callback)

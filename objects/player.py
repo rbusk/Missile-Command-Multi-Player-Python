@@ -26,6 +26,7 @@ class Player(Protocol):
 
 	def connectionMade(self):
 		command_queue.get().addCallback(self.callback)
+		data_queue.get().addCallback(gs.callback)
 
 	def connectionLost(self,reason):
 		reactor.stop()
