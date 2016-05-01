@@ -15,11 +15,8 @@ p2_command_queue = DeferredQueue()
 
 class Gamespace(object):
 
-	def __init__(self, current_player):
+	def __init__(self, current_player=0):
 		self.current_player = current_player
-
-	def main(self):
-
 		#initialize
 		pygame.init()
 		self.size = width, height = 640, 480
@@ -38,7 +35,7 @@ class Gamespace(object):
 		self.maxbombs = 6 #max number of bombs that can be dropped
 
 		#player 1 shoots missiles, player 2 drops bombs
-		gameover = 0
+		self.gameover = 0
 
 		self.bomb_speed = 2
 		self.missile_speed = 2
@@ -49,20 +46,22 @@ class Gamespace(object):
 		self.p1_points = 0
 		self.p2_points = 0
 
-		while not gameover:
-			#click tick
-			self.clock.tick(60)
+	def main(self):
 
-			#handle events
-			self.handle_events()
 
-			#tick updates
-			self.ticks()
+		#click tick
+		self.clock.tick(60)
 
-			#draw images
-			self.draw_images()
+		#handle events
+		self.handle_events()
 
-			gameover = self.check_winner()
+		#tick updates
+		self.ticks()
+
+		#draw images
+		self.draw_images()
+
+		self.gameover = self.check_winner()
 
 		#calculate points for whoever is aiming missiles
 		if self.player == 1:
