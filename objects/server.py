@@ -22,20 +22,20 @@ class Player1Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		global round_over
-		if data is "Round Over":
+		global round_over, turn_over
+		if data == "Round Over":
 			round_over += 1
 			if round_over == 2:
 				p1_data_queue.put("Round Over")
 				p2_data_queue.put("Round Over")
 				round_over = 0
-		elif data is "Turn Over":
+		elif data == "Turn Over":
 			turn_over += 1
 			if turn_over == 2:
 				p1_data_queue.put("Turn Over")
 				p2_data_queue.put("Turn Over")
 				turn_over = 0
-		elif data is "Game Over":
+		elif data == "Game Over":
 			game_over += 1
 			if game_over == 2:
 				p1_data_queue.put("Game Over")
@@ -78,19 +78,20 @@ class Player2Conn(Protocol):
 
 	def dataReceived(self,data):
 		global round_over,turn_over
-		if data is "Round Over":
+		if data == "Round Over":
 			round_over += 1
 			if round_over == 2:
+				print "hello"
 				p1_data_queue.put("Round Over")
 				p2_data_queue.put("Round Over")
 				round_over = 0
-		elif data is "Turn Over":
+		elif data == "Turn Over":
 			turn_over += 1
 			if turn_over == 2:
 				p1_data_queue.put("Turn Over")
 				p2_data_queue.put("Turn Over")
 				turn_over = 0
-		elif data is "Game Over":
+		elif data == "Game Over":
 			game_over += 1
 			if game_over == 2:
 				p1_data_queue.put("Game Over")

@@ -83,10 +83,8 @@ class Gamespace(object):
 
 		pygame.display.flip()
 
-	def ticks(self,TYPE):
-
-		self.TYPE = TYPE
-		
+	def ticks(self):
+		print self.TYPE
 		if not self.roundover:
 
 			self.handle_events()
@@ -173,7 +171,7 @@ class Gamespace(object):
 					print "p1:", self.p1_points
 					print "p2:", self.p2_points
 
-					#self.draw_images()
+					self.draw_images()
 
 	def handle_events(self):
 
@@ -370,9 +368,9 @@ class Gamespace(object):
 	def reset_turn(self):
 
 		if self.TYPE == "Missiles":
-			self.TYPE == "Bombs"
+			self.TYPE = "Bombs"
 		elif self.TYPE == "Bombs":
-			self.TYPE == "Missiles"
+			self.TYPE = "Missiles"
 
 		self.initialize_cities()
 

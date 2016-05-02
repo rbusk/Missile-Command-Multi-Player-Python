@@ -19,15 +19,13 @@ class Player(Protocol):
 	def dataReceived(self,data):
 		if data == 'Missiles' or data == 'Bombs':
 			self.TYPE = data
-			self.lc = LoopingCall(gs.ticks, self.TYPE)
+			gs.TYPE = self.TYPE
+			self.lc = LoopingCall(gs.ticks)
 			self.lc.start(1./60)
 		elif data == "Turn Over":
-			if self.TYPE == 'Missiles':
-				self.TYPE = "Bombs"
-			else:
-				self.TYPE = "Missiles"
 			gs.reset_turn()
 		elif data == "Round Over":
+			print data
 			gs.reset_round()
 		elif data == "Game Over":
 			gs.game_over()
@@ -61,6 +59,5 @@ if __name__ == '__main__':
 			PLAYER = 2
 			reactor.connectTCP(HOST,PLAYER_2,ClientConnFactory())
 			break
-	print TYPE
 	reactor.run()
 
