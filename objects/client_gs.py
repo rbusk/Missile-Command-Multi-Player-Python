@@ -42,6 +42,8 @@ class Gamespace(object):
 		self.p1_points = 0
 		self.p2_points = 0
 
+		self.ncollisions = 0
+
 	def draw_images(self):
 		#black screen
 		black = 0, 0, 0
@@ -92,7 +94,6 @@ class Gamespace(object):
 		pygame.display.flip()
 
 	def ticks(self):
-		print self.TYPE
 		if not self.roundover:
 
 			self.handle_events()
@@ -167,21 +168,15 @@ class Gamespace(object):
 					command_queue.put("Game Over")
 				elif self.check_turn_over():
 					command_queue.put("Turn Over")
-					print 'turn over'
-					self.draw_images()
 
 				else:
-					print 'round over'
 					command_queue.put("Round Over")
 
 					#calculate points for whoever is aiming missiles
 
-					self.calculate_points()
+				self.calculate_points()
 
-					print "p1:", self.p1_points
-					print "p2:", self.p2_points
-
-					self.draw_images()
+				self.draw_images()
 
 	def handle_events(self):
 
@@ -275,9 +270,9 @@ class Gamespace(object):
 				#if bomb is within the explosion, add points and delete the bomb
 				if (explosion.r > d):
 					if self.TYPE == "Missiles":
-						self.p1_points = self.p1_points + 1
+						self.p1_points = self.p1_points + 5
 					else:
-						self.p2_points = self.p2_points + 2
+						self.p2_points = self.p2_points + 5
 					del self.bombs[i]
 				else:
 					i = i+1
@@ -357,7 +352,7 @@ class Gamespace(object):
 			#points for each city left
 			for city in self.cities:
 				if city.da == 1:
-					points = points + 1
+					points = points + 50
 			self.p1_points += points
 
 		points = 0
@@ -368,10 +363,8 @@ class Gamespace(object):
 			#points for each city left
 			for city in self.cities:
 				if city.da == 1:
-					points = points + 1
+					points = points + 50
 			self.p2_points += points
-
-
 		
 
 	#use to initialize game or to reset game when both turns are up
