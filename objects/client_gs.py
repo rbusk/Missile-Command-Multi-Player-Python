@@ -19,6 +19,7 @@ class Gamespace(object):
 		self.TYPE = None
 		self.roundover = 0
 		self.current_player = current_player
+		self.turn = 0
 
 		#initialize pygame
 		pygame.init()
@@ -80,6 +81,13 @@ class Gamespace(object):
 		textpos2.x = self.size[0]-40
 		textpos2.y = 0
 		self.screen.blit(text2,textpos2)
+
+		font3 = pygame.font.Font(None, 36)
+		text3 = font.render(str(self.TYPE),1,(204,0,0))
+		textpos3 = text3.get_rect()
+		textpos3.x = self.size[0]/2
+		textpos3.y = 0
+		self.screen.blit(text3,textpos3)
 
 		pygame.display.flip()
 
@@ -155,7 +163,9 @@ class Gamespace(object):
 
 			if self.roundover:
 
-				if self.check_turn_over():
+				if self.turn == 2:
+					command_queue.put("Game Over")
+				elif self.check_turn_over():
 					command_queue.put("Turn Over")
 					print 'turn over'
 					self.draw_images()
@@ -366,6 +376,7 @@ class Gamespace(object):
 
 	#use to initialize game or to reset game when both turns are up
 	def reset_turn(self):
+		self.turn += 1
 
 		if self.TYPE == "Missiles":
 			self.TYPE = "Bombs"
@@ -388,6 +399,9 @@ class Gamespace(object):
 		self.nbombs = 0 #keep track of how many bombs have been dropped
 
 		self.roundover = 0
+
+	def game_over(self):
+		pass
 
 	def callback(self, data):
 
