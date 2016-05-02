@@ -3,7 +3,7 @@ from pygame.locals import *
 from math import atan2, sin, cos
 
 class Missile(pygame.sprite.Sprite):
-
+	"""class for shooting missiles"""
 	def __init__(self, sx, sy, fx, fy, v, source, gs=None):
 
 		pygame.sprite.Sprite.__init__(self)
@@ -37,7 +37,7 @@ class Missile(pygame.sprite.Sprite):
 		pygame.draw.line(self.gs.screen, (0, 204, 204), self.start, self.pos)
 
 class Bomb(Missile):
-
+	"""Bomb class that inherites from missile"""
 	def __init__(self, sx, sy, fx, fy, v, dest, gs=None):
 		Missile.__init__(self, sx, sy, fx, fy, v, gs)
 
