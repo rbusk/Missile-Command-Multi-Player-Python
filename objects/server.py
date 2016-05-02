@@ -46,7 +46,7 @@ class Player1Conn(Protocol):
 
 	def connectionMade(self):
 		p2_data_queue.get().addCallback(self.callback)
-		print 'New conenction from', self.addr
+		print 'New connection from', self.addr
 		global NUMBER_OF_PLAYERS
 		print NUMBER_OF_PLAYERS
 		if NUMBER_OF_PLAYERS == 0:
@@ -102,7 +102,7 @@ class Player2Conn(Protocol):
 
 	def connectionMade(self):
 		p1_data_queue.get().addCallback(self.callback)
-		print 'New conenction from', self.addr
+		print 'New connection from', self.addr
 		global NUMBER_OF_PLAYERS
 		print NUMBER_OF_PLAYERS
 		if NUMBER_OF_PLAYERS == 0:

@@ -259,10 +259,7 @@ class Gamespace(object):
 
 				#if bomb is within the explosion, add points and delete the bomb
 				if (explosion.r > d):
-					if self.TYPE == "Missiles":
-						self.p1_points = self.p1_points + 5
-					else:
-						self.p2_points = self.p2_points + 5
+					self.ncollisions += 1
 					del self.bombs[i]
 				else:
 					i = i+1
@@ -343,6 +340,8 @@ class Gamespace(object):
 			for city in self.cities:
 				if city.da == 1:
 					points = points + 50
+
+			points += self.ncollisions * 5
 			self.p1_points += points
 
 		points = 0
@@ -354,6 +353,7 @@ class Gamespace(object):
 			for city in self.cities:
 				if city.da == 1:
 					points = points + 50
+			points += self.ncollisions * 5
 			self.p2_points += points
 		
 
