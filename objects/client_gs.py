@@ -87,9 +87,16 @@ class Gamespace(object):
 		font3 = pygame.font.Font(None, 36)
 		text3 = font.render(str(self.TYPE),1,(204,0,0))
 		textpos3 = text3.get_rect()
-		textpos3.x = self.size[0]/2
+		textpos3.x = self.size[0]/3
 		textpos3.y = 0
 		self.screen.blit(text3,textpos3)
+
+		font4 = pygame.font.Font(None, 36)
+		text4 = font.render("Turn: " + str(self.turn+1),1,(204,0,0))
+		textpos4 = text4.get_rect()
+		textpos4.x = (self.size[0]/3)*2
+		textpos4.y = 0
+		self.screen.blit(text4,textpos4)
 
 		pygame.display.flip()
 
@@ -164,7 +171,7 @@ class Gamespace(object):
 
 			if self.roundover:
 
-				if self.turn == 2:
+				if self.turn == 1 and self.check_turn_over():
 					command_queue.put("Game Over")
 				elif self.check_turn_over():
 					command_queue.put("Turn Over")
@@ -394,7 +401,20 @@ class Gamespace(object):
 		self.roundover = 0
 
 	def game_over(self):
-		pass
+		if self.p1_points > self.p2_points:
+			winner = "YOU WIN"
+		elif self.p2_points > self.p1_points:
+			winner = "YOU LOSE"
+		else:
+			winner = "TIE"
+
+		font = pygame.font.Font(None, 100)
+		text = font.render(winner,1,(204,0,0))
+		textpos = text.get_rect()
+		textpos.centerx = self.size[0]/2
+		textpos.centery = self.size[1]/2
+		self.screen.blit(text,textpos)
+		pygame.display.flip()
 
 	def callback(self, data):
 

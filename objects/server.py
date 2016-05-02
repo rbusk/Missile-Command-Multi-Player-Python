@@ -22,7 +22,7 @@ class Player1Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		global round_over, turn_over
+		global round_over, turn_over, game_over
 		if data == "Round Over":
 			round_over += 1
 			if round_over == 2:
@@ -77,7 +77,7 @@ class Player2Conn(Protocol):
 		self.addr = addr
 
 	def dataReceived(self,data):
-		global round_over,turn_over
+		global round_over,turn_over,game_over
 		if data == "Round Over":
 			round_over += 1
 			if round_over == 2:
