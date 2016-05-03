@@ -1,3 +1,5 @@
+#Mary Connolly, Ryan Busk
+
 import pygame
 from pygame.locals import *
 import sys
@@ -14,10 +16,13 @@ data_queue = DeferredQueue()
 command_queue = DeferredQueue()
 
 class Gamespace(object):
+	"""Gamespace for the client. Contains objects for the game, game loop, screen, etc."""
 
 	def __init__(self, current_player=0):
+		"""Initializes gamespace."""
+
 		self.TYPE = None
-		self.roundover = 0
+		self.roundover = 0 #set to 1 when the round is over
 		self.current_player = current_player
 		self.turn = 0
 
@@ -26,13 +31,13 @@ class Gamespace(object):
 		self.size = width, height = 640, 480
 		self.screen = pygame.display.set_mode(self.size)
 
-		self.initialize_cities()
+		self.initialize_cities() #initialize cities
 
-		self.reset_round()
+		self.reset_round() #initializes bases and arrays for explosions, missiles, and bombs
 
-		self.maxbombs = 6 #max number of bombs that can be dropped
+		self.maxbombs = 10 #max number of bombs that can be dropped
 
-		#player 1 shoots missiles, player 2 drops bombs
+		#set speeds of missiles and bombs
 		self.bomb_speed = 2
 		self.missile_speed = 2
 
@@ -42,9 +47,9 @@ class Gamespace(object):
 		self.p1_points = 0
 		self.p2_points = 0
 
-		self.ncollisions = 0
-
 	def draw_images(self):
+		"""Render all objects to the screen."""
+
 		#black screen
 		black = 0, 0, 0
 		self.screen.fill(black)
@@ -55,21 +60,27 @@ class Gamespace(object):
 			if city.da == 1:
 				city.draw()
 
+		#draw bases
 		for base in self.bases:
 			base.draw()
 
+		#draw missiles
 		for missile in self.missiles:
 			missile.draw()
 
+		#draw explosions
 		for explosion in self.explosions:
 			explosion.draw()
 
+		#draw bombs
 		for bomb in self.bombs:
 			bomb.draw()
 
+		#draw explosions from bomb
 		for explosion in self.bomb_explosions:
 			explosion.draw()
 
+		#Display player 1's points
 		font = pygame.font.Font(None, 36)
 		text = font.render(str(self.p1_points),1,(204,0,0))
 		textpos = text.get_rect()
@@ -77,6 +88,7 @@ class Gamespace(object):
 		textpos.y = 0
 		self.screen.blit(text,textpos)
 
+		#Display player 2's points
 		font2 = pygame.font.Font(None, 36)
 		text2 = font.render(str(self.p2_points),1,(204,0,0))
 		textpos2 = text2.get_rect()
@@ -84,6 +96,7 @@ class Gamespace(object):
 		textpos2.y = 0
 		self.screen.blit(text2,textpos2)
 
+		#Display "Missiles" or "Bombs" to let the player know if he is currently shooting missiles or dropping bombs.
 		font3 = pygame.font.Font(None, 36)
 		text3 = font.render(str(self.TYPE),1,(204,0,0))
 		textpos3 = text3.get_rect()
@@ -91,6 +104,7 @@ class Gamespace(object):
 		textpos3.y = 0
 		self.screen.blit(text3,textpos3)
 
+		#Display the turn number
 		font4 = pygame.font.Font(None, 36)
 		text4 = font.render("Turn: " + str(self.turn+1),1,(204,0,0))
 		textpos4 = text4.get_rect()
@@ -98,19 +112,30 @@ class Gamespace(object):
 		textpos4.y = 0
 		self.screen.blit(text4,textpos4)
 
+		#Render to screen
 		pygame.display.flip()
 
 	def ticks(self):
+		"""Tick function -- handles events, calls tick on objects, checks for dead objects."""
+
+		#if the round is not over
 		if not self.roundover:
 
+			#check for user input
 			self.handle_events()
+
+			#draw to the screen
 			self.draw_images()
+
 			# call ticks for each object
-			i = 0
+
+			i = 0 #iterator
+
+			#call tick on each missile
 			while (i < len(self.missiles)):
 				self.missiles[i].tick()
 
-				#check if missile is dead; if so, create explosion and pop off of list
+				#check if missile is dead; if so, create explosion and pop the missile off of list
 				if (self.missiles[i].da == 0):
 					explosion = Explosion(self.missiles[i].fx, self.missiles[i].fy, 2, 50, self)
 					self.explosions.append(explosion)
@@ -119,6 +144,8 @@ class Gamespace(object):
 					i = i+1
 
 			i = 0
+
+			#call tick on each explosion
 			while (i < len(self.explosions)):
 				self.explosions[i].tick()
 
@@ -129,6 +156,8 @@ class Gamespace(object):
 					i = i+1
 			
 			i = 0
+
+			#call tick on each explosion from a bomb
 			while (i < len(self.bomb_explosions)):
 				self.bomb_explosions[i].tick()
 
@@ -139,53 +168,62 @@ class Gamespace(object):
 					i = i+1
 
 			i = 0
+
+			#call tick on each bomb
 			while (i < len(self.bombs)):
 				self.bombs[i].tick()
 
-				#check if bomb is dead; if so, create explosion and pop off of list
+				#check if bomb is dead; if so, create explosion and pop bomb off of list
 				#also, make city or base "dead"
 				if (self.bombs[i].da == 0):
 
 					dest = self.bombs[i].dest #get destination 0-8 of bomb
 
-					#if destination is a base, set count to 0
+					#if destination is a base, set count to 0 since it can't shoot any more missiles
 					if (dest % 4 == 0):
 						self.bases[dest/4].count = 0
 
-					#else if destination is a city, destroy it
+					#else if destination is a city, destroy it by setting da to 0 (dead)
 					else:
 						if (dest <= 3):
 							self.cities[dest-1].da = 0
 						else:
 							self.cities[dest-2].da = 0
 
+					#create explosion
 					explosion = Explosion(self.bombs[i].fx, self.bombs[i].fy, 2, 50, self)
 					self.bomb_explosions.append(explosion)
 					del self.bombs[i]
 				else:
 					i = i+1
 
+			#check collisions between bombs and missile explosions
 			self.check_collisions()
 			
+			#check if the round is over
 			self.roundover = self.check_round_over()
 
 			if self.roundover:
 
+				#check if the entire game is over
 				if self.turn == 1 and self.check_turn_over():
 					command_queue.put("Game Over")
+
+				#check if the turn is over
 				elif self.check_turn_over():
 					command_queue.put("Turn Over")
 
+				#otherwise, the round is over
 				else:
 					command_queue.put("Round Over")
 
-					#calculate points for whoever is aiming missiles
-
+				#calculate points for whoever is aiming missiles
 				self.calculate_points()
 
 				self.draw_images()
 
 	def handle_events(self):
+		"""Function to handle user input."""
 
 		for event in pygame.event.get():
 
@@ -193,11 +231,13 @@ class Gamespace(object):
 			if event.type == QUIT:
 				sys.exit()
 
+			#If user has pressed a key
 			if event.type == KEYDOWN:
 
 				bomb = None
 				missile = None
 
+				#get mouse position
 				pos = pygame.mouse.get_pos()
 
 				if self.TYPE == "Bombs":
@@ -205,7 +245,7 @@ class Gamespace(object):
 					#if player still has bombs to drop
 					if (self.nbombs < self.maxbombs):
 
-						#if 1-9 pressed, set off bomb
+						#if 1-9 pressed, set off bomb by creating a new object and adding it to self.bombs
 						if event.key == pygame.K_1:
 							bomb = Bomb(pos[0], 0, self.bases[0].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 0)
 
@@ -233,6 +273,7 @@ class Gamespace(object):
 						if event.key == pygame.K_9:
 							bomb = Bomb(pos[0], 0, self.bases[2].rect.centerx, self.size[1] - self.city_width, self.bomb_speed, 8)
 
+						#if a bomb has been created, add it to the command_queue and to self.bombs
 						if bomb != None:
 							data = pickle.dumps(bomb)
 							command_queue.put(data)
@@ -241,6 +282,7 @@ class Gamespace(object):
 							self.nbombs = self.nbombs + 1
 
 				if self.TYPE == "Missiles":
+
 					#fire missiles from bases with a, s, d. First make sure that there are enough missiles left in the base
 					if event.key == pygame.K_a:
 						if (self.bases[0].count > 0):
@@ -257,6 +299,7 @@ class Gamespace(object):
 							self.bases[2].count = self.bases[2].count - 1
 							missile = Missile(self.bases[2].rect.centerx, self.size[1] - self.city_width, pos[0], pos[1], self.missile_speed, 2)
 
+					#if a missile has been created, add it to the command_queue and to self.missiles
 					if missile != None:
 						data = pickle.dumps(missile)
 						command_queue.put(data)
@@ -264,17 +307,23 @@ class Gamespace(object):
 						self.missiles.append(missile)
 
 	def check_collisions(self):
+		"""Check for collisions between each bomb and each explosion. If there is a collision, then the bomb should be destroyed."""
 
+		#for each explosion caused by a missile
 		for explosion in self.explosions:
+
 			i = 0
+
+			#iterate through each bomb in self.bombs
 			while (i < len(self.bombs)):
-				#calculate distance from missile to explosion
+
+				#calculate distance from bomb to explosion
 				dx = explosion.pos[0] - self.bombs[i].pos[0]
 				dy = explosion.pos[1] - self.bombs[i].pos[1]
 
 				d = sqrt(dx*dx + dy*dy)
 
-				#if bomb is within the explosion, add points and delete the bomb
+				#if bomb is within the explosion, increment self.ncollisions and delete the bomb
 				if (explosion.r > d):
 					self.ncollisions += 1
 					del self.bombs[i]
@@ -283,6 +332,7 @@ class Gamespace(object):
 
 
 	def initialize_bases(self):
+		"""Initialize three Bases, each with 9 missiles."""
 
 		#initialize bases list
 		self.bases = []
@@ -290,24 +340,26 @@ class Gamespace(object):
 		#calculate what width/height of each city/base should be
 		width = (self.size[0] - 200) / 9
 
-		#initialize and bases
+		#initialize each base
 		for i in range(0, 9):
 
-			# if i is 0, 4, or 8, then create a base instead of a city
+			# if i is 0, 4, or 8
 			if (i % 4 == 0):
 				base = Base(20*(i+1) + i*width, self.size[1] - width,  width, width, 9, self)
 				self.bases.append(base)
 
 	def initialize_cities(self):
+		"""Initialize 6 cities."""
+
 		self.cities = []
 		
 		#calculate what width/height of each city/base should be
 		width = (self.size[0] - 200) / 9
 
-		#initialize and bases
+		#initialize each city
 		for i in range(0, 9):
 
-			# if i is 0, 4, or 8, then create a base instead of a city
+			# if i is not 0, 4, or 8, then create a city
 			if (i % 4 != 0):
 				city = City(20*(i+1) + i*width, self.size[1] - width,  width, width, self)
 				self.cities.append(city)
@@ -315,8 +367,9 @@ class Gamespace(object):
 		self.city_width = width
 
 	def check_round_over(self):
+		"""Returns 1 if the round is over and 0 if it is not."""
 
-		#check cities -- if they are all dead, then player 2 wins
+		#check cities -- if they are all dead, then the round is over
 		ncities_dead = 0
 		for city in self.cities:
 			if city.da == 0:
@@ -325,7 +378,7 @@ class Gamespace(object):
 		if ncities_dead == len(self.cities):
 			return 1
 
-		#if player 2 has dropped all of his bombs and all of them have exploded, then player 1 wins
+		#if player 2 has dropped all of his bombs and all of them have exploded, then the round is over
 		elif (self.nbombs >= self.maxbombs and len(self.bomb_explosions) == 0 and len(self.bombs) == 0):
 			return 1
 
@@ -333,8 +386,9 @@ class Gamespace(object):
 			return 0
 
 	def check_turn_over(self):
+		"""Returns 1 if the turn is over and 0 if it is not."""
 
-		#check if all of cities are dead -- if so, then game is over
+		#check if all of cities are dead -- if so, then the turn is over
 		ncities_dead = 0
 		for city in self.cities:
 			if city.da == 0:
@@ -343,8 +397,8 @@ class Gamespace(object):
 		if ncities_dead == len(self.cities):
 			return 1
 
-	#calculate points for player aiming missiles
 	def calculate_points(self):
+		"""At the end of each round, this function is called to calculate points for the player aiming missiles."""
 
 		points = 0
 
@@ -358,11 +412,14 @@ class Gamespace(object):
 				if city.da == 1:
 					points = points + 50
 
+			#points for each collision of a missile explosion with a bomb
 			points += self.ncollisions * 5
+
 			self.p1_points += points
 
 		points = 0
 		if self.TYPE == "Bombs":
+			#points for each base left
 			for base in self.bases:
 				points = points + base.count
 
@@ -370,24 +427,28 @@ class Gamespace(object):
 			for city in self.cities:
 				if city.da == 1:
 					points = points + 50
+
+			#points for each collision of a missile explosino with a bomb
 			points += self.ncollisions * 5
 			self.p2_points += points
 		
 
-	#use to initialize game or to reset game when both turns are up
 	def reset_turn(self):
+		"""Use to initialize the game or to reset the game when a turn is up."""
 		self.turn += 1
 
+		#Change self.TYPE so that whoever was dropping bombs is now shooting missiles and vice versa.
 		if self.TYPE == "Missiles":
 			self.TYPE = "Bombs"
 		elif self.TYPE == "Bombs":
 			self.TYPE = "Missiles"
 
 		self.initialize_cities()
-
 		self.reset_round()
 
 	def reset_round(self):
+		"""Use to reset bases, missiles, bombs, and explosions for a new round."""
+
 		self.initialize_bases()
 
 		#active bombs missiles and explosions(empty at first)
@@ -397,10 +458,12 @@ class Gamespace(object):
 		self.bomb_explosions = []
 
 		self.nbombs = 0 #keep track of how many bombs have been dropped
-
 		self.roundover = 0
+		self.ncollisions = 0 #number of collisions of bombs with missile explosions; use to calculate score
 
 	def game_over(self):
+		"""Displays whether the player has won or lost the game. Called once the game is over."""
+
 		if self.p1_points > self.p2_points:
 			winner = "YOU WIN"
 		elif self.p2_points > self.p1_points:
@@ -417,6 +480,7 @@ class Gamespace(object):
 		pygame.display.flip()
 
 	def callback(self, data):
+		"""Called when the client receives data from the server."""
 
 		#unpickle data
 		d = pickle.loads(data)
@@ -425,6 +489,8 @@ class Gamespace(object):
 		#determine if object is Missile or Bomb and append to correct list
 		if d.TYPE == "Missile":
 			self.missiles.append(d)
+
+			#since missile was launched, adjust the count of the base from which it was launched
 			if self.bases[d.source].count > 0:
 				self.bases[d.source].count -= 1 
 
