@@ -5,13 +5,12 @@ from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
-from client_gs import *
+from objects.client_gs import *
 
 TYPE = None #Bomb or Missile
 PLAYER_1 = 40003 #port for player 1
 PLAYER_2 = 40008 #port for player 2
 HOST = '127.0.0.1'
-#HOST = '10.176.31.106'
 
 gs = Gamespace() #initialize local gamespace
 
