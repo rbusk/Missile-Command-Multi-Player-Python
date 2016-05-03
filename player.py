@@ -28,6 +28,8 @@ class Player(Protocol):
 			gs.reset_round() #reset round
 		elif data == "Game Over": #same wih game
 			gs.game_over()
+		elif data == "Exit":
+			self.transport.loseConnection()
 		else:
 			data_queue.put(data) #send any other data to queue
 

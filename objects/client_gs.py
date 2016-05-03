@@ -229,7 +229,8 @@ class Gamespace(object):
 
 			#quit game
 			if event.type == QUIT:
-				sys.exit()
+				command_queue.put("Exit");
+				#sys.exit()
 
 			#If user has pressed a key
 			if event.type == KEYDOWN:

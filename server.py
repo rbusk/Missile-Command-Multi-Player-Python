@@ -48,6 +48,11 @@ class Player1Conn(Protocol):
 				p1_data_queue.put("Game Over")
 				p2_data_queue.put("Game Over")
 				game_over = 0
+
+		elif data == "Exit":
+			p1_data_queue.put("Exit")
+			p2_data_queue.put("Exit")
+
 		else:
 			"""puts all other data in player 1 queue"""
 			p1_data_queue.put(data)
@@ -94,7 +99,6 @@ class Player2Conn(Protocol):
 			"""only sends round over if both players complete round"""
 			round_over += 1
 			if round_over == 2:
-				print "hello"
 				p1_data_queue.put("Round Over")
 				p2_data_queue.put("Round Over")
 				round_over = 0
@@ -121,7 +125,6 @@ class Player2Conn(Protocol):
 		p1_data_queue.get().addCallback(self.callback)
 		print 'New connection from', self.addr
 		global NUMBER_OF_PLAYERS
-		print NUMBER_OF_PLAYERS
 		if NUMBER_OF_PLAYERS == 0:
 			NUMBER_OF_PLAYERS = 1
 			self.transport.write("Missiles")
@@ -130,9 +133,9 @@ class Player2Conn(Protocol):
 			self.transport.write("Bombs")
 
 	def connectionLost(self,reason):
-		"""stop rreactor if connection is lost"""
+		"""stop reactor if connection is lost"""
 		print 'Lost connection to', self.addr
-		reactor.stop()
+		#reactor.stop()
 
 	def callback(self,data):
 		"""player 2 callback"""
